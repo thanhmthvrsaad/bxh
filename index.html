@@ -199,7 +199,7 @@
               body: JSON.stringify({ classID }),
             });
             const listData = await resList.json();
-            const studentsData = listData.data || [];
+            let studentsData = listData.data || [];
             studentsData = studentsData.filter((sv) => {
               if (!sv.hoten) return true;
               // Chuẩn hóa chuỗi: xóa khoảng trắng thừa, đưa về chữ thường
