@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏆 Bảng Xếp Hạng Điểm Học Kỳ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen p-6">
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+      <!-- Tiêu đề Học kỳ 2 -->
+      <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">
+        🏆 Bảng Xếp Hạng Điểm Học Kỳ 2 2025-2026
+      </h1>
+
+      <!-- Bộ lọc Khóa và Lớp -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Chọn Khóa -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Chọn Khóa:</label
+          >
+          <select
+            id="selectKhoa"
+            class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="K65" selected>Khóa 65</option>
+            <option value="K64">Khóa 64</option>
+          </select>
+        </div>
+
+        <!-- Chọn Lớp -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Chọn Lớp:</label
+          >
+          <select
+            id="selectLop"
+            class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <!-- Tự động render bằng JS -->
+          </select>
+        </div>
+
+        <!-- Nút bấm lấy dữ liệu -->
+        <div class="flex items-end">
+          <button
+            id="btnFetch"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded transition shadow"
+          >
+            Lấy Dữ Liệu
+          </button>
+        </div>
+      </div>
+
+      <!-- Trạng thái loading -->
+      <div id="status" class="text-blue-600 font-medium mb-4 hidden"></div>
+
+      <!-- Bảng hiển thị kết quả -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse hidden" id="resultTable">
+          <thead>
+            <tr class="bg-gray-200 text-gray-700">
+              <th class="p-3 border">Hạng</th>
+              <th class="p-3 border">Họ tên</th>
+              <th class="p-3 border text-right">GPA 10</th>
+              <th class="p-3 border text-right">GPA 4</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="text-gray-600">
+            <!-- Dữ liệu chèn vào đây -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const classesData = {
+        K65: [
+          { lophoC_ID: 6862, teN_LOP: "Công nghệ thông tin K65" },
+          { lophoC_ID: 6863, teN_LOP: "Khai thác vận tải K65" },
+          { lophoC_ID: 6864, teN_LOP: "Kinh tế xây dựng K65" },
+          { lophoC_ID: 6865, teN_LOP: "Kiến trúc K65" },
+          { lophoC_ID: 6866, teN_LOP: "Kế toán K65" },
+          { lophoC_ID: 6867, teN_LOP: "Kỹ thuật cơ khí động lực K65" },
+          { lophoC_ID: 6868, teN_LOP: "Kỹ thuật cơ điện tử K65" },
+          { lophoC_ID: 6869, teN_LOP: "Kỹ thuật xây dựng 1 K65" },
+          { lophoC_ID: 6870, teN_LOP: "Kỹ thuật xây dựng 2 K65" },
+          {
+            lophoC_ID: 6871,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 2 K65",
+          },
+          {
+            lophoC_ID: 6872,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 1 K65",
+          },
+          { lophoC_ID: 6873, teN_LOP: "Kỹ thuật ô tô K65" },
+          {
+            lophoC_ID: 6874,
+            teN_LOP: "Kỹ thuật điều khiển và tự động hóa K65",
+          },
+          { lophoC_ID: 6875, teN_LOP: "Kỹ thuật điện K65" },
+          { lophoC_ID: 6876, teN_LOP: "Kỹ thuật điện tử - viễn thông K65" },
+          {
+            lophoC_ID: 6877,
+            teN_LOP: "Logistics và Quản lý chuỗi cung ứng K65",
+          },
+          { lophoC_ID: 6878, teN_LOP: "Quản lý xây dựng K65" },
+          {
+            lophoC_ID: 6879,
+            teN_LOP: "Quản trị dịch vụ du lịch và lữ hành K65",
+          },
+          { lophoC_ID: 6880, teN_LOP: "Quản trị kinh doanh K65" },
+          { lophoC_ID: 6881, teN_LOP: "Tài chính - Ngân hàng K65" },
+          { lophoC_ID: 6882, teN_LOP: "Kinh doanh quốc tế K65" },
+        ],
+        K64: [
+          { lophoC_ID: 6762, teN_LOP: "Công nghệ thông tin K64" },
+          { lophoC_ID: 6763, teN_LOP: "Khai thác vận tải K64" },
+          { lophoC_ID: 6764, teN_LOP: "Kinh tế xây dựng K64" },
+          { lophoC_ID: 6765, teN_LOP: "Kiến trúc K64" },
+          { lophoC_ID: 6766, teN_LOP: "Kế toán K64" },
+          { lophoC_ID: 6767, teN_LOP: "Kỹ thuật cơ khí động lực K64" },
+          { lophoC_ID: 6768, teN_LOP: "Kỹ thuật Cơ điện tử K64" },
+          { lophoC_ID: 6769, teN_LOP: "Kỹ thuật xây dựng 1 K64" },
+          { lophoC_ID: 6770, teN_LOP: "Kỹ thuật xây dựng 2 K64" },
+          {
+            lophoC_ID: 6771,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 1 K64",
+          },
+          {
+            lophoC_ID: 6772,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 2 K64",
+          },
+          { lophoC_ID: 6773, teN_LOP: "Kỹ thuật ô tô K64" },
+          {
+            lophoC_ID: 6774,
+            teN_LOP: "Kỹ thuật điều khiển và tự động hoá K64",
+          },
+          { lophoC_ID: 6775, teN_LOP: "Kỹ thuật điện K64" },
+          { lophoC_ID: 6776, teN_LOP: "Kỹ thuật điện tử - viễn thông K64" },
+          {
+            lophoC_ID: 6777,
+            teN_LOP: "Logistics và quản lý chuỗi cung ứng K64",
+          },
+          { lophoC_ID: 6778, teN_LOP: "Quản lý xây dựng K64" },
+          {
+            lophoC_ID: 6779,
+            teN_LOP: "Quản trị dịch vụ du lịch và lữ hành K64",
+          },
+          { lophoC_ID: 6780, teN_LOP: "Quản trị kinh doanh K64" },
+          { lophoC_ID: 6781, teN_LOP: "Tài chính ngân hàng K64" },
+        ],
+      };
+
+      const BASE = "https://gtvt2-backend.onrender.com/api/score";
+
+      const selectKhoa = document.getElementById("selectKhoa");
+      const selectLop = document.getElementById("selectLop");
+
+      // BỔ SUNG: Hàm cập nhật danh sách lớp tương ứng với Khóa được chọn
+      function updateLopOptions() {
+        const khoaSelected = selectKhoa.value;
+        const lops = classesData[khoaSelected] || [];
+
+        selectLop.innerHTML = "";
+        lops.forEach((lop) => {
+          const option = document.createElement("option");
+          option.value = lop.lophoC_ID;
+          option.textContent = lop.teN_LOP;
+          selectLop.appendChild(option);
+        });
+      }
+
+      // Khởi chạy danh sách lớp ban đầu và gán sự kiện lắng nghe thay đổi Khóa
+      updateLopOptions();
+      selectKhoa.addEventListener("change", updateLopOptions);
+
+      document
+        .getElementById("btnFetch")
+        .addEventListener("click", async () => {
+          const classID = selectLop.value;
+          const statusDiv = document.getElementById("status");
+          const table = document.getElementById("resultTable");
+          const tbody = document.getElementById("tableBody");
+
+          if (!classID) return alert("Vui lòng chọn một lớp học!");
+
+          statusDiv.classList.remove("hidden");
+          table.classList.add("hidden");
+          tbody.innerHTML = "";
+          statusDiv.innerText = "Đang lấy danh sách sinh viên...";
+
+          try {
+            const resList = await fetch(`${BASE}/getListStudentByClassID`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ classID }),
+            });
+            const listData = await resList.json();
+            const studentsData = listData.data || [];
+            studentsData = studentsData.filter((sv) => {
+              if (!sv.hoten) return true;
+              // Chuẩn hóa chuỗi: xóa khoảng trắng thừa, đưa về chữ thường
+              const normalizedName = sv.hoten
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, " ");
+              return !normalizedName.includes("mai văn thanh");
+            });
+            if (studentsData.length === 0) {
+              statusDiv.innerText =
+                "❌ Không tìm thấy sinh viên nào trong lớp này.";
+              return;
+            }
+
+            let studentsScoreList = [];
+            const total = studentsData.length;
+
+            for (let i = 0; i < total; i++) {
+              const sv = studentsData[i];
+              statusDiv.innerText = `⏳ Đang xử lý (${i + 1}/${total}): ${sv.hoten || "Unknown"}`;
+
+              try {
+                const resScore = await fetch(`${BASE}/GetUIScore`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ mssv: sv.mA_SINHVIEN, classID }),
+                });
+                const htmlText = await resScore.text();
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, "text/html");
+
+                let targetTable = null;
+                const h3Elements = doc.querySelectorAll("h3");
+
+                for (let h3 of h3Elements) {
+                  const text = h3.textContent
+                    .toUpperCase()
+                    .replace(/\s+/g, " ");
+
+                  const hasYear = text.includes("2025-2026");
+                  const hasSemester2 =
+                    text.includes("HỌC KỲ 2") ||
+                    text.includes("HỌC KỲ II") ||
+                    text.includes("HK 2") ||
+                    text.includes("HK II");
+
+                  if (hasYear && hasSemester2) {
+                    // TÌM KIẾM ĐỆ QUY XUỐNG DƯỚI ĐỂ LẤY ĐÚNG THẺ TABLE NẰM TRONG DIV CONTAINER
+                    let nextEl = h3.nextElementSibling;
+                    while (nextEl) {
+                      if (nextEl.tagName === "TABLE") {
+                        targetTable = nextEl;
+                        break;
+                      }
+                      // Nếu thẻ tiếp theo là thẻ bọc (div), tìm thẻ table bên trong nó
+                      const subTable = nextEl.querySelector("table");
+                      if (subTable) {
+                        targetTable = subTable;
+                        break;
+                      }
+                      nextEl = nextEl.nextElementSibling;
+                    }
+                    break;
+                  }
+                }
+                if (!targetTable) continue;
+
+                const rows = targetTable.querySelectorAll("tbody tr");
+                if (rows.length === 0) continue;
+
+                const lastRowCells =
+                  rows[rows.length - 1].querySelectorAll("td");
+                if (lastRowCells.length < 2) continue;
+
+                const gpa10 = parseFloat(
+                  lastRowCells[lastRowCells.length - 2].textContent.trim(),
+                );
+                const gpa4 = parseFloat(
+                  lastRowCells[lastRowCells.length - 1].textContent.trim(),
+                );
+
+                if (!isNaN(gpa10) && !isNaN(gpa4)) {
+                  studentsScoreList.push({
+                    name: sv.hoten || "Unknown",
+                    gpa10,
+                    gpa4,
+                  });
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            }
+
+            if (studentsScoreList.length === 0) {
+              statusDiv.innerText =
+                "❌ Không tìm thấy dữ liệu điểm học kỳ 2 2025-2026 cho lớp này.";
+              return;
+            }
+
+            studentsScoreList.sort(
+              (a, b) => b.gpa4 - a.gpa4 || b.gpa10 - a.gpa10,
+            );
+
+            let rank = 1;
+            studentsScoreList.forEach((sv, idx) => {
+              if (sv.name && sv.name.trim().toLowerCase() === "mai văn thanh") {
+                return;
+              }
+              if (
+                idx > 0 &&
+                (sv.gpa4 !== studentsScoreList[idx - 1].gpa4 ||
+                  sv.gpa10 !== studentsScoreList[idx - 1].gpa10)
+              ) {
+                rank = idx + 1;
+              }
+
+              const tr = document.createElement("tr");
+              tr.className = "border-b hover:bg-gray-50";
+              tr.innerHTML = `
+                        <td class="p-3 border font-bold">${String(rank).padStart(2, "0")}</td>
+                        <td class="p-3 border text-gray-800">${sv.name}</td>
+                        <td class="p-3 border text-right font-mono">${sv.gpa10.toFixed(2)}</td>
+                        <td class="p-3 border text-right font-mono font-semibold text-blue-600">${sv.gpa4.toFixed(2)}</td>
+                    `;
+              tbody.appendChild(tr);
+            });
+
+            statusDiv.classList.add("hidden");
+            table.classList.remove("hidden");
+          } catch (err) {
+            statusDiv.innerText =
+              "❌ Đã có lỗi xảy ra trong quá trình kết nối.";
+            console.error(err);
+          }
+        });
+    </script>
+  </body>
+</html>
