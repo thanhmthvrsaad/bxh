@@ -159,7 +159,6 @@
       const selectKhoa = document.getElementById("selectKhoa");
       const selectLop = document.getElementById("selectLop");
 
-      // BỔ SUNG: Hàm cập nhật danh sách lớp tương ứng với Khóa được chọn
       function updateLopOptions() {
         const khoaSelected = selectKhoa.value;
         const lops = classesData[khoaSelected] || [];
@@ -173,9 +172,15 @@
         });
       }
 
-      // Khởi chạy danh sách lớp ban đầu và gán sự kiện lắng nghe thay đổi Khóa
       updateLopOptions();
       selectKhoa.addEventListener("change", updateLopOptions);
+
+      // Danh sách các tên cần lọc bỏ
+      const excludedNames = [
+        "mai văn thanh",
+        "nguyễn vương thiện thanh",
+        "nguyen vuong thien thanh"
+      ];
 
       document
         .getElementById("btnFetch")
@@ -200,15 +205,18 @@
             });
             const listData = await resList.json();
             let studentsData = listData.data || [];
+
+            // Lọc bỏ các tên có trong danh sách excludedNames
             studentsData = studentsData.filter((sv) => {
               if (!sv.hoten) return true;
-              // Chuẩn hóa chuỗi: xóa khoảng trắng thừa, đưa về chữ thường
               const normalizedName = sv.hoten
                 .trim()
                 .toLowerCase()
                 .replace(/\s+/g, " ");
-              return !normalizedName.includes("mai văn thanh");
+              
+              return !excludedNames.some((name) => normalizedName.includes(name));
             });
+
             if (studentsData.length === 0) {
               statusDiv.innerText =
                 "❌ Không tìm thấy sinh viên nào trong lớp này.";
@@ -249,14 +257,12 @@
                     text.includes("HK II");
 
                   if (hasYear && hasSemester2) {
-                    // TÌM KIẾM ĐỆ QUY XUỐNG DƯỚI ĐỂ LẤY ĐÚNG THẺ TABLE NẰM TRONG DIV CONTAINER
                     let nextEl = h3.nextElementSibling;
                     while (nextEl) {
                       if (nextEl.tagName === "TABLE") {
                         targetTable = nextEl;
                         break;
                       }
-                      // Nếu thẻ tiếp theo là thẻ bọc (div), tìm thẻ table bên trong nó
                       const subTable = nextEl.querySelector("table");
                       if (subTable) {
                         targetTable = subTable;
@@ -307,9 +313,6 @@
 
             let rank = 1;
             studentsScoreList.forEach((sv, idx) => {
-              if (sv.name && sv.name.trim().toLowerCase() === "mai văn thanh") {
-                return;
-              }
               if (
                 idx > 0 &&
                 (sv.gpa4 !== studentsScoreList[idx - 1].gpa4 ||
