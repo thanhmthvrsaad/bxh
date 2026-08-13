@@ -27,6 +27,8 @@
           >
             <option value="K65" selected>Khóa 65</option>
             <option value="K64">Khóa 64</option>
+            <option value="K63">Khóa 63</option>
+            <!-- 🔥 ĐÃ THÊM K63 -->
           </select>
         </div>
 
@@ -47,7 +49,7 @@
         <div class="flex items-end">
           <button
             id="btnFetch"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded transition shadow"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded transition shadow cursor-pointer"
           >
             Lấy Dữ Liệu
           </button>
@@ -152,10 +154,46 @@
           { lophoC_ID: 6780, teN_LOP: "Quản trị kinh doanh K64" },
           { lophoC_ID: 6781, teN_LOP: "Tài chính ngân hàng K64" },
         ],
+        K63: [
+          { lophoC_ID: 6604, teN_LOP: "Công nghệ thông tin K63" },
+          { lophoC_ID: 6605, teN_LOP: "Khai thác vận tải K63" },
+          { lophoC_ID: 6606, teN_LOP: "Kinh tế xây dựng K63" },
+          { lophoC_ID: 6607, teN_LOP: "Kiến trúc K63" },
+          { lophoC_ID: 6608, teN_LOP: "Kế toán K63" },
+          { lophoC_ID: 6609, teN_LOP: "Kỹ thuật cơ khí động lực K63" },
+          { lophoC_ID: 6610, teN_LOP: "Kỹ thuật Cơ điện tử K63" },
+          { lophoC_ID: 6611, teN_LOP: "Kỹ thuật xây dựng 1 K63" },
+          { lophoC_ID: 6612, teN_LOP: "Kỹ thuật xây dựng 2 K63" },
+          {
+            lophoC_ID: 6613,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 1 K63",
+          },
+          {
+            lophoC_ID: 6614,
+            teN_LOP: "Kỹ thuật xây dựng công trình giao thông 2 K63",
+          },
+          { lophoC_ID: 6615, teN_LOP: "Kỹ thuật ô tô K63" },
+          {
+            lophoC_ID: 6616,
+            teN_LOP: "Kỹ thuật điều khiển và tự động hoá K63",
+          },
+          { lophoC_ID: 6617, teN_LOP: "Kỹ thuật điện K63" },
+          { lophoC_ID: 6618, teN_LOP: "Kỹ thuật điện tử - viễn thông K63" },
+          {
+            lophoC_ID: 6619,
+            teN_LOP: "Logistics và quản lý chuỗi cung ứng K63",
+          },
+          { lophoC_ID: 6620, teN_LOP: "Quản lý xây dựng K63" },
+          {
+            lophoC_ID: 6621,
+            teN_LOP: "Quản trị dịch vụ du lịch và lữ hành K63",
+          },
+          { lophoC_ID: 6622, teN_LOP: "Quản trị kinh doanh K63" },
+          { lophoC_ID: 6623, teN_LOP: "Tài chính ngân hàng K63" },
+        ],
       };
 
       const BASE = "https://gtvt2-backend.onrender.com/api/score";
-
       const selectKhoa = document.getElementById("selectKhoa");
       const selectLop = document.getElementById("selectLop");
 
@@ -179,7 +217,7 @@
       const excludedNames = [
         "mai văn thanh",
         "nguyễn vương thiện thanh",
-        "nguyen vuong thien thanh"
+        "nguyen vuong thien thanh",
       ];
 
       document
@@ -213,8 +251,10 @@
                 .trim()
                 .toLowerCase()
                 .replace(/\s+/g, " ");
-              
-              return !excludedNames.some((name) => normalizedName.includes(name));
+
+              return !excludedNames.some((name) =>
+                normalizedName.includes(name),
+              );
             });
 
             if (studentsData.length === 0) {
